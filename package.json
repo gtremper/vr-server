@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/gtremper/vr-server#readme",
   "dependencies": {
+    "underscore": "^1.8.3",
     "websocket": "^1.0.19"
   }
 }
