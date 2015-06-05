@@ -1,0 +1,22 @@
+{
+  "name": "vr-server",
+  "version": "0.1.0",
+  "description": "Websocket server for multiplayer VR game",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gtremper/vr-server.git"
+  },
+  "author": "Graham Tremper",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gtremper/vr-server/issues"
+  },
+  "homepage": "https://github.com/gtremper/vr-server#readme",
+  "dependencies": {
+    "websocket": "^1.0.19"
+  }
+}
