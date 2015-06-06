@@ -38,7 +38,7 @@ wsServer = new WebSocketServer({
     autoAcceptConnections: true
 });
 
-// Generates an incrementing Id whenever called
+// Generates an incrementing ID whenever called
 var genID = function() {
   var counter = 0;
   return function() {
@@ -46,15 +46,15 @@ var genID = function() {
   }
 }();
 
-// Current connections to connection ID
+// connection ID to connection
 OpenConnections = {};
 
 wsServer.on('connect', function(connection) {
-    console.log('Connection accepted.');
 
     // Give this socket an ID and add it to our collection of open connections
     var socketID = genID();
     OpenConnections[socketID] = connection;
+    console.log('Player ' + socketID + ' connected');
 
     connection.on('message', function(message) {
       // Can't handle binary data
@@ -69,8 +69,9 @@ wsServer.on('connect', function(connection) {
       _.each(OpenConnections, function(conn, id) {
         if (id != socketID) {
           var msg = {
-            player: socketID,
-            message: message.utf8Data
+            "player": socketID,
+            "event": "update",
+            "data": message.utf8Data
           };
           conn.sendUTF(JSON.stringify(msg));
         }
@@ -86,8 +87,8 @@ wsServer.on('connect', function(connection) {
       // Tell all other clients that a player left
       _.each(OpenConnections, function(conn, id) {
         var msg = {
-          player: socketID,
-          message: "disconnected"
+          "player": socketID,
+          "event": "disconnect"
         };
         conn.sendUTF(JSON.stringify(msg));
       });
