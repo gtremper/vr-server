@@ -70,7 +70,7 @@ wsServer.on('connect', function(connection) {
           var msg = {
             "player": socketID,
             "event": "update",
-            "data": message.utf8Data
+            "data": JSON.parse(message.utf8Data)
           };
           conn.sendUTF(JSON.stringify(msg));
         }
