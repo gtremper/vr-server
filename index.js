@@ -8,7 +8,6 @@ var _ = require('underscore')
 //
 var PORT = 5000
 
-
 //
 // Create and start http server
 //
