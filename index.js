@@ -47,27 +47,14 @@ var genID = function() {
 }();
 
 // Current connections to connection ID
-connections = {};
-
-//
-// Create websocket server
-// 
-wsServer = new WebSocketServer({
-    httpServer: server,
-    // You should not use autoAcceptConnections for production
-    // applications, as it defeats all standard cross-origin protection
-    // facilities built into the protocol and the browser.  You should
-    // *always* verify the connection's origin and decide whether or not
-    // to accept it.
-    autoAcceptConnections: true
-});
+OpenConnections = {};
 
 wsServer.on('connect', function(connection) {
     console.log('Connection accepted.');
 
-    // Give this socket an ID and add it to our collection
+    // Give this socket an ID and add it to our collection of open connections
     var socketID = genID();
-    connections[socketID] = connection;
+    OpenConnections[socketID] = connection;
 
     connection.on('message', function(message) {
       // Can't handle binary data
@@ -78,20 +65,32 @@ wsServer.on('connect', function(connection) {
 
       console.log('Received Message: ' + message.utf8Data);
 
-        // Forward message to all clients except this one
-      _.each(connections, function(conn, id) {
+      // Forward message to all clients except this one
+      _.each(OpenConnections, function(conn, id) {
         if (id != socketID) {
-          conn.sendUTF(JSON.stringify({
-            player: id,
+          var msg = {
+            player: socketID,
             message: message.utf8Data
-          }));
+          };
+          conn.sendUTF(JSON.stringify(msg));
         }
       });
     });
 
     connection.on('close', function(reasonCode, description) {
       console.log('Player ' + socketID + ' disconnected.');
-      // Remove from our collection of open connection
-      delete connections[socketID]
+
+      // Remove from our collection of open connections
+      delete OpenConnections[socketID]
+
+      // Tell all other clients that a player left
+      _.each(OpenConnections, function(conn, id) {
+        var msg = {
+          player: socketID,
+          message: "disconnected"
+        };
+        conn.sendUTF(JSON.stringify(msg));
+      });
     });
+
 });
